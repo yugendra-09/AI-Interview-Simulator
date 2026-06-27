@@ -5,11 +5,14 @@ const router = express.Router();
 const authRoutes = require("./authRoutes");
 const resumeRoutes = require("./resumeRoutes");
 const analysisRoutes = require("./analysisRoutes");
+const aiRoutes = require("./aiRoutes");
+const historyRoutes = require("./historyRoutes");
 
 router.use("/auth", authRoutes);
 router.use("/resume", resumeRoutes);
 router.use("/analysis", analysisRoutes);
-
+router.use("/ai", aiRoutes);
+router.use("/history", historyRoutes);
 router.get("/", (req, res) => {
     res.json({
         success: true,

@@ -8,21 +8,38 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  fullName  String
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         Int      @id @default(autoincrement())
+  fullName   String
+  email      String   @unique
+  password   String
 
-  resumes   Resume[]
+  resumes    Resume[]
+  analyses   ResumeAnalysis[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 model Resume {
+  id          Int      @id @default(autoincrement())
+  fileName    String
+  filePath    String
+  uploadedAt  DateTime @default(now())
+
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+
+  analyses    ResumeAnalysis[]
+}
+model ResumeAnalysis {
   id         Int      @id @default(autoincrement())
-  fileName   String
-  filePath   String
-  uploadedAt DateTime @default(now())
+
+  analysis   Json
+
+  createdAt  DateTime @default(now())
 
   userId     Int
-  user       User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resumeId   Int
+
+  user        User    @relation(fields: [userId], references: [id])
+  resume      Resume  @relation(fields: [resumeId], references: [id])
 }
