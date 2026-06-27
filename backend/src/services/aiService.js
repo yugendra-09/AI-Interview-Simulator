@@ -42,7 +42,46 @@ ${resumeText}
     return JSON.parse(result.response.text());
 
 };
+const evaluateAnswer = async (question, answer) => {
+
+    const prompt = `
+You are an experienced technical interviewer.
+
+Evaluate the candidate's answer.
+
+Question:
+${question}
+
+Candidate Answer:
+${answer}
+
+IMPORTANT:
+- Return ONLY valid JSON.
+- Do not use markdown.
+- Do not use \`\`\`json.
+
+Return in this format:
+
+{
+  "score": 8,
+  "feedback": "Good explanation. Add more implementation details."
+}
+`;
+
+    const result = await model.generateContent(prompt);
+
+    let response = result.response.text();
+
+    // Remove markdown if Gemini still returns it
+    response = response
+        .replace(/```json/g, "")
+        .replace(/```/g, "")
+        .trim();
+
+    return JSON.parse(response);
+};
 
 module.exports = {
-    analyzeResume
+    analyzeResume,
+    evaluateAnswer
 };

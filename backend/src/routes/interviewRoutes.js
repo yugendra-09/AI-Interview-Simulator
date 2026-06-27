@@ -14,5 +14,15 @@ router.get(
     authenticateUser,
     interviewController.getQuestions
 );
+router.post(
+    "/answer",
+    authenticateUser,
+    interviewController.submitAnswer
+);
+router.post(
+    "/:sessionId/finish",
+    authenticateUser,
+    interviewController.finishInterview
+);
 
 module.exports = router;

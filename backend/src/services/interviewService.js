@@ -77,9 +77,59 @@ const getSessionQuestions = async (sessionId) => {
 
     return questions;
 };
+const saveAnswer = async (
+    sessionId,
+    answer,
+    aiFeedback,
+    aiScore
+) => {
 
+    return await prisma.interviewAnswer.create({
+        data: {
+            sessionId,
+            questionId,
+            answer,
+            aiFeedback,
+            aiScore
+        }
+    });
+
+};
+const finishInterview = async (sessionId) => {
+
+    const answers = await prisma.interviewAnswer.findMany({
+        where: {
+            sessionId: Number(sessionId)
+        }
+    });
+
+    let averageScore = 0;
+
+    if (answers.length > 0) {
+        const total = answers.reduce((sum, answer) => sum + (answer.aiScore || 0), 0);
+        averageScore = total / answers.length;
+    }
+
+    const session = await prisma.interviewSession.update({
+        where: {
+            id: Number(sessionId)
+        },
+        data: {
+            status: "COMPLETED",
+            score: averageScore,
+            endedAt: new Date()
+        }
+    });
+
+    return {
+        session,
+        averageScore
+    };
+};
 module.exports = {
     createInterviewSession,
     generateQuestions,
-    getSessionQuestions
+    getSessionQuestions,
+    saveAnswer,
+    finishInterview
 };

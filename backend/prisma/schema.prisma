@@ -71,20 +71,23 @@ model InterviewQuestion {
   category   String
 
   sessionId  Int
+  answers InterviewAnswer[]
 
   session InterviewSession @relation(fields: [sessionId], references: [id])
 }
 model InterviewAnswer {
 
-  id          Int      @id @default(autoincrement())
+  id         Int @id @default(autoincrement())
 
-  answer      String
+  answer     String
 
-  aiFeedback  String?
+  aiFeedback String?
 
-  aiScore     Float?
+  aiScore    Float?
 
-  sessionId   Int
+  sessionId  Int
+  questionId Int
 
-  session InterviewSession @relation(fields: [sessionId], references: [id])
+  session  InterviewSession  @relation(fields: [sessionId], references: [id])
+  question InterviewQuestion @relation(fields: [questionId], references: [id])
 }
