@@ -53,6 +53,7 @@ model InterviewSession {
 
   startedAt  DateTime @default(now())
   endedAt    DateTime?
+  
 
   userId     Int
   analysisId Int
@@ -62,6 +63,7 @@ model InterviewSession {
 
   questions   InterviewQuestion[]
   answers     InterviewAnswer[]
+  report InterviewReport?
 }
 model InterviewQuestion {
 
@@ -90,4 +92,18 @@ model InterviewAnswer {
 
   session  InterviewSession  @relation(fields: [sessionId], references: [id])
   question InterviewQuestion @relation(fields: [questionId], references: [id])
+}
+model InterviewReport {
+
+  id          Int      @id @default(autoincrement())
+
+  overallScore Float
+
+  report      Json
+
+  createdAt   DateTime @default(now())
+
+  sessionId   Int @unique
+
+  session InterviewSession @relation(fields: [sessionId], references: [id])
 }

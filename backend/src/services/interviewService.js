@@ -79,6 +79,7 @@ const getSessionQuestions = async (sessionId) => {
 };
 const saveAnswer = async (
     sessionId,
+    questionId,
     answer,
     aiFeedback,
     aiScore
@@ -96,6 +97,7 @@ const saveAnswer = async (
 
 };
 const finishInterview = async (sessionId) => {
+    
 
     const answers = await prisma.interviewAnswer.findMany({
         where: {
@@ -126,10 +128,22 @@ const finishInterview = async (sessionId) => {
         averageScore
     };
 };
+const saveInterviewReport = async (sessionId, report) => {
+
+    return await prisma.interviewReport.create({
+        data: {
+            sessionId,
+            overallScore: report.overallScore,
+            report
+        }
+    });
+
+};
 module.exports = {
     createInterviewSession,
     generateQuestions,
     getSessionQuestions,
     saveAnswer,
-    finishInterview
+    finishInterview,
+    saveInterviewReport
 };

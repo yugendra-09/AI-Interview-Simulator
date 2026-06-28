@@ -81,12 +81,12 @@ const submitAnswer = async (req, res) => {
         );
 
         const savedAnswer = await interviewService.saveAnswer(
-            question.sessionId,
-            answer,
-            evaluation.feedback,
-            evaluation.score
-        );
-
+    question.sessionId,
+    questionId,
+    answer,
+    evaluation.feedback,
+    evaluation.score
+);
         res.status(201).json({
             success: true,
             message: "Answer evaluated successfully",
@@ -110,14 +110,39 @@ const finishInterview = async (req, res) => {
 
     try {
 
-        const result = await interviewService.finishInterview(
-            req.params.sessionId
+        const sessionId = Number(req.params.sessionId);
+
+        const result = await interviewService.finishInterview(sessionId);
+
+        const questions = await prisma.interviewQuestion.findMany({
+            where: {
+                sessionId
+            }
+        });
+
+        const answers = await prisma.interviewAnswer.findMany({
+            where: {
+                sessionId
+            }
+        });
+
+        const report = await aiService.generateInterviewReport(
+            questions,
+            answers
+        );
+
+        await interviewService.saveInterviewReport(
+            sessionId,
+            report
         );
 
         res.status(200).json({
             success: true,
             message: "Interview completed successfully",
-            data: result
+            data: {
+                session: result.session,
+                report
+            }
         });
 
     } catch (error) {

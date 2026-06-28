@@ -80,8 +80,47 @@ Return in this format:
 
     return JSON.parse(response);
 };
+const generateInterviewReport = async (questions, answers) => {
+
+    const prompt = `
+You are an experienced technical interviewer.
+
+Below are the interview questions and candidate answers.
+
+Questions:
+${JSON.stringify(questions, null, 2)}
+
+Answers:
+${JSON.stringify(answers, null, 2)}
+
+Return ONLY valid JSON.
+
+{
+    "overallScore": 8,
+    "technicalRating": "Good",
+    "communicationRating": "Average",
+    "strengths": [],
+    "weakAreas": [],
+    "recommendations": [],
+    "hireRecommendation": "Recommended"
+}
+`;
+
+    const result = await model.generateContent(prompt);
+
+    let response = result.response.text();
+
+    response = response
+        .replace(/```json/g, "")
+        .replace(/```/g, "")
+        .trim();
+
+    return JSON.parse(response);
+};
+
 
 module.exports = {
     analyzeResume,
-    evaluateAnswer
+    evaluateAnswer,
+    generateInterviewReport
 };
